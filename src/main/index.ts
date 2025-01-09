@@ -93,3 +93,46 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
+
+// ---------------------------CRUD OPERATION-----------------------------
+// Create new users(firstname, lastname, birthdate, email)
+ipcMain.on('create-user', (event, firstname, lastname, birthdate, email) => {
+  db.run(
+    'INSERT INTO users (firstname, lastname, birthdate, email ) VALUES (?, ?, ?, ?)',
+    [firstname, lastname, birthdate, email],
+    function (err) {
+      if (err) event.reply('create-items-response', { success: false, error: err.message })
+      else event.reply('create-items-response', { success: true, id: this.lastID })
+    }
+  )
+})
+// Read and display all users
+ipcMain.on('read-users', (event) => {
+  db.all('SELECT * FROM users', [], function (err, rows) {
+    if (err) event.reply('read-users-response', { success: false, error: err.message })
+    else event.reply('read-users-response', { success: true, users: rows })
+  })
+})
+// Update users by Id
+ipcMain.on('update-user', (event, id, firstname, lastname, birthdate, email) => {
+  db.run(
+    `UPDATE users SET
+    firstname = ?,
+    lastname = ?,
+    birthdate = ?,
+    email = ?
+    WHERE id = ?`,
+    [firstname, lastname, birthdate, email, id],
+    function (err) {
+      if (err) event.reply('update-user-response', { success: false, error: err.message })
+      else event.reply('update-user-response', { success: true })
+    }
+  )
+})
+// Delete user by ID
+ipcMain.on('delete-user', (event, id) => {
+  db.run('DELETE FROM users WHERE id = ?', [id], function (err) {
+    if (err) event.reply('delete-user-response', { success: false, error: err.message })
+    else event.reply('delete-user-response', { success: true })
+  })
+})
