@@ -1,10 +1,10 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { electronApp, is, optimizer } from '@electron-toolkit/utils'
+import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import sqlite3 from 'sqlite3'
 import icon from '../../resources/icon.png?asset'
-import sqlite3  from 'sqlite3'
 
-let db: sqlite3.Database;
+let db: sqlite3.Database
 
 function createWindow(): void {
   // Create the browser window.
@@ -56,6 +56,24 @@ app.whenReady().then(() => {
   ipcMain.on('ping', () => console.log('pong'))
 
   createWindow()
+
+  // Create a Database and a connection
+  db = new sqlite3.Database('mydb.sqlite', (err) => {
+    if (err) console.error(err.message)
+    console.log('Connected to SQL database')
+    db.run(
+      `CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, 
+        firstname TEXT NOT NULL, 
+        lastname TEXT NOT NULL,
+        birthdate DATE NOT NULL,
+        email TEXT NOT NULL 
+      )`,
+      (err) => {
+        if (err) console.error(err.message)
+      }
+    )
+  })
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
