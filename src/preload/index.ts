@@ -1,8 +1,24 @@
-import { contextBridge } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
+import { contextBridge, ipcRenderer } from 'electron'
+
+// Interface for callback fn
+interface Callback {
+  (event: any, response: any): void
+}
 
 // Custom APIs for renderer
 const api = {
+  // API for users handling
+  createUser: (firstname: string, lastname: string, birthdate: Date, email: string) =>
+    ipcRenderer.send('create-user', firstname, lastname, birthdate, email),
+  readUsers: () => ipcRenderer.send('read-users'),
+  updateUser: (id: number, firstname: string, lastname: string, birthdate: Date, email: string) =>
+    ipcRenderer.send('update-user', id, firstname, lastname, birthdate, email),
+  deleteUser: (id: number) => ipcRenderer.send('delete-user', id),
+  onCreateUserResponse: (callback: Callback) => ipcRenderer.on('create-user-response', callback),
+  onReadUsersResponse: (callback: Callback) => ipcRenderer.on("read-users-response", callback),
+  onUpdateUserResponse: (callback: Callback) => ipcRenderer.on("update-user-response", callback),
+  onDeleteUserResponse: (callback: Callback) => ipcRenderer.on("delete-user-response", callback)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
