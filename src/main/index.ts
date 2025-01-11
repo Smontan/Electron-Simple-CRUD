@@ -107,10 +107,14 @@ ipcMain.on('create-user', (event, firstname, lastname, birthdate, email) => {
   )
 })
 // Read and display all users
-ipcMain.on('read-users', (event) => {
-  db.all('SELECT * FROM users', [], function (err, rows) {
-    if (err) event.reply('read-users-response', { success: false, error: err.message })
-    else event.reply('read-users-response', { success: true, users: rows })
+ipcMain.handle('fetch-users', async () => {
+  return new Promise((resolve, reject) => {
+    db.all("SELECT * FROM users", [], (err, rows) => {
+      if(err)
+        reject(err)
+      else
+        resolve(rows)
+    })
   })
 })
 // Update users by Id
