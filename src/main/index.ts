@@ -66,7 +66,7 @@ app.whenReady().then(() => {
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         firstname TEXT NOT NULL, 
         lastname TEXT NOT NULL,
-        birthdate DATE NOT NULL,
+        birthdate TEXT  NOT NULL,
         email TEXT NOT NULL 
       )`,
       (err) => {
