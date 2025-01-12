@@ -9,8 +9,7 @@ interface Callback {
 // Custom APIs for renderer
 const api = {
   // API for users handling
-  createUser: (firstname: string, lastname: string, birthdate: Date, email: string) =>
-    ipcRenderer.send('create-user', firstname, lastname, birthdate, email),
+  fetchUsers: () => ipcRenderer.invoke('fetch-users'),
   readUsers: () => ipcRenderer.send('read-users'),
   updateUser: (id: number, firstname: string, lastname: string, birthdate: Date, email: string) =>
     ipcRenderer.send('update-user', id, firstname, lastname, birthdate, email),
