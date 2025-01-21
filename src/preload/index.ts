@@ -10,14 +10,19 @@ interface Callback {
 const api = {
   // API for users handling
   fetchUsers: () => ipcRenderer.invoke('fetch-users'),
-  readUsers: () => ipcRenderer.send('read-users'),
-  updateUser: (id: number, firstname: string, lastname: string, birthdate: Date, email: string) =>
-    ipcRenderer.send('update-user', id, firstname, lastname, birthdate, email),
+  createUser: (user: { firstname: string; lastname: string; birthdate: string; email: string }) =>
+    ipcRenderer.send('create-user', user),
+  updateUser: (user: {
+    id: number
+    firstname: string
+    lastname: string
+    birthdate: string
+    email: string
+  }) => ipcRenderer.send('update-user', user),
   deleteUser: (id: number) => ipcRenderer.send('delete-user', id),
-  onCreateUserResponse: (callback: Callback) => ipcRenderer.on('create-user-response', callback),
-  onReadUsersResponse: (callback: Callback) => ipcRenderer.on("read-users-response", callback),
-  onUpdateUserResponse: (callback: Callback) => ipcRenderer.on("update-user-response", callback),
-  onDeleteUserResponse: (callback: Callback) => ipcRenderer.on("delete-user-response", callback)
+  onCreateUserResponse: (callback: Callback) => ipcRenderer.on('create-users-response', callback),
+  onUpdateUserResponse: (callback: Callback) => ipcRenderer.on('update-user-response', callback),
+  onDeleteUserResponse: (callback: Callback) => ipcRenderer.on('delete-user-response', callback)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

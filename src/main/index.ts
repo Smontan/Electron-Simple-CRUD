@@ -58,7 +58,7 @@ app.whenReady().then(() => {
   createWindow()
 
   // Create a Database and a connection
-  db = new sqlite3.Database('mydb.sqlite', (err) => {
+  db = new sqlite3.Database('mydb.sqlite3 ', (err) => {
     if (err) console.error(err.message)
     console.log('Connected to SQL database')
     db.run(
@@ -96,13 +96,13 @@ app.on('window-all-closed', () => {
 
 // ---------------------------CRUD OPERATION-----------------------------
 // Create new users(firstname, lastname, birthdate, email)
-ipcMain.on('create-user', (event, firstname, lastname, birthdate, email) => {
+ipcMain.on('create-user', (event, user) => {
   db.run(
     'INSERT INTO users (firstname, lastname, birthdate, email ) VALUES (?, ?, ?, ?)',
-    [firstname, lastname, birthdate, email],
+    [user.firstname, user.lastname, user.birthdate, user.email],
     function (err) {
-      if (err) event.reply('create-items-response', { success: false, error: err.message })
-      else event.reply('create-items-response', { success: true, id: this.lastID })
+      if (err) event.reply('create-users-response', { success: false, error: err.message })
+      else event.reply('create-users-response', { success: true, id: this.lastID })
     }
   )
 })
@@ -118,7 +118,7 @@ ipcMain.handle('fetch-users', async () => {
   })
 })
 // Update users by Id
-ipcMain.on('update-user', (event, id, firstname, lastname, birthdate, email) => {
+ipcMain.on('update-user', (event, user) => {
   db.run(
     `UPDATE users SET
     firstname = ?,
@@ -126,7 +126,7 @@ ipcMain.on('update-user', (event, id, firstname, lastname, birthdate, email) => 
     birthdate = ?,
     email = ?
     WHERE id = ?`,
-    [firstname, lastname, birthdate, email, id],
+    [user.firstname, user.lastname, user.birthdate, user.email, user.id],
     function (err) {
       if (err) event.reply('update-user-response', { success: false, error: err.message })
       else event.reply('update-user-response', { success: true })
